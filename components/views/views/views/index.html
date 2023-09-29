@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Lateral con Iconos</title>
+    <!-- Agrega la biblioteca Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos base */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            background-color: #222831;
+        }
+
+        /* Estilos para el botón de hamburguesa */
+        .hamburger-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1;
+            color: #ffffff;
+            transition: left 0.3s; /* Agregamos la transición aquí */
+        }
+
+        /* Estilos para el menú lateral */
+        .menu {
+            background-color: #393e46;
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -260px; /* Inicialmente oculto */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 40px 25px;
+            box-shadow: 5px 0 10px rgba(0, 0, 0, 0.2);
+            transition: left 0.3s;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile img {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            color: #000707;
+        }
+
+        /* Estilo para los botones del menú */
+        .menu button {
+            padding: 12px 20px;
+            background-color: #000103; /* Cambiamos el color de fondo */
+            border: 2px solid white;
+            color: white; /* Cambiamos el color del texto */
+            border-radius: 0; /* Eliminamos la redondez */
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s, width 0.3s; /* Agregamos una transición para suavizar los cambios */
+            outline: none;
+        }
+
+        /* Estilo para los botones del menú cuando se pasa el mouse por encima */
+        .menu button:hover {
+            background-color: gray;
+            transform: scale(1.05);
+            color: white; /* Cambiamos el color del texto al pasar el mouse */
+        }
+
+        /* Nuevo estilo para los botones cuando el menú está oculto */
+        .menu-hidden .menu button {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Estilos para el área de contenido */
+        .content-area {
+            margin-left: 0;
+            padding: 60px;
+            transition: margin-left 0.3s;
+        }
+
+        h1 {
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+            font-weight: normal;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        Vue.component('side-menu', {
+            data: function() {
+                return {
+                    profileImage: 'https://img.freepik.com/vector-premium/ilustracion-arbol-estilo-dibujos-animados_625165-15.jpg?w=740',
+                    profileName: 'Osvaldo Garcia',
+                    menuVisible: false
+                };
+            },
+            methods: {
+                toggleMenu() {
+                    this.menuVisible = !this.menuVisible;
+                    // Cambia la posición del botón de hamburguesa cuando se muestra/oculta el menú
+                    const hamburgerBtn = document.querySelector('.hamburger-btn');
+                    if (this.menuVisible) {
+                        hamburgerBtn.style.left = '280px'; // Ajusta el valor según el ancho del menú
+                    } else {
+                        hamburgerBtn.style.left = '20px';
+                    }
+                }
+            },
+
+            template: `
+                <div>
+                    <!-- Botón de hamburguesa para mostrar/ocultar el menú -->
+                    <div class="hamburger-btn" @click="toggleMenu">
+                        <i class="fas fa-bars fa-2x"></i>
+                    </div>
+                    <!-- Menú lateral -->
+                    <div class="menu" :class="{ 'menu-hidden': !menuVisible }" :style="{ left: menuVisible ? '0' : '-260px' }">
+                        <div class="profile">
+                            <img :src="profileImage" alt="Foto de perfil">
+                            <div class="profile-name">{{ profileName }}</div>
+                        </div>
+                        <!-- Iconos agregados a los elementos del menú -->
+                        <button @click="$emit('navigate', 'Inicio')"><i class="fas fa-home"></i> Inicio</button>
+                        <button @click="$emit('navigate', 'Configuración')"><i class="fas fa-cog"></i> Configuración</button>
+                        <button @click="$emit('navigate', 'Acerca de')"><i class="fas fa-info-circle"></i> Acerca de</button>
+                    </div>
+                </div>
+            `,
+        });
+
+        new Vue({
+            el: '#app',
+            data: {
+                currentView: 'Inicio',
+            },
+            template: `
+                <div>
+                    <side-menu @navigate="navigateTo"></side-menu>
+                    <div class="content-area" :style="{ marginLeft: menuVisible ? '260px' : '0' }">
+                        <h1>{{ currentView }}</h1>
+                        <p v-if="currentView === 'Inicio'">Bienvenido al inicio. Esta pantalla debe mostrar información relevante o contenido principal de tu elección.</p>
+                        <p v-if="currentView === 'Configuración'">Aquí los usuarios pueden ajustar configuraciones personalizadas Aquí los usuarios pueden ajustar configuraciones personalizadas.</p>
+                        <p v-if="currentView === 'Acerca de'">Aprende más sobre nuestra
+                            <p v-if="currentView === 'Acerca de'">Proporciona información sobre la aplicación o la empresa Proporciona información sobre la aplicación o la empresa .</p>
+                    </div>
+                </div>
+            `,
+            methods: {
+                navigateTo(view) {
+                    this.currentView = view;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
